@@ -50,7 +50,17 @@ Ssh into vm
 Try running some docker containers
 
 ```
-docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
+docker run \
+    --runtime=nvidia \
+    --rm \
+    nvidia/cuda \
+    nvidia-smi
 
-docker run --runtime=nvidia -ti -u $(id -u):$(id -g) --rm tensorflow/tensorflow:latest-gpu-py3-jupyter bash
+docker run \
+    --runtime=nvidia \
+    -u $(id -u):$(id -g) \
+    -ti \
+    --rm \
+    tensorflow/tensorflow:latest-gpu-py3-jupyter \
+    bash
 ```
