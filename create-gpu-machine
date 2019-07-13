@@ -118,7 +118,7 @@ done
 
 log "Connected to ${VM_NAME} IP:${VM_IP} as ${USERNAME}"
 
-ssh -o "StrictHostKeyChecking=no" ${USERNAME}@${VM_IP} < install-docker-and-cuda-drivers.sh
+ssh -o "StrictHostKeyChecking=no" ${USERNAME}@${VM_IP} > /dev/null 2> /dev/null < install-docker-and-cuda-drivers.sh
 log "Installed docker and cuda drivers to ${VM_NAME}, rebooting now"
 sleep 10
 
@@ -127,7 +127,7 @@ until ssh -o "StrictHostKeyChecking=no" ${USERNAME}@${VM_IP} "echo 1 > /dev/null
     sleep 5
 done
 
-ssh -o "StrictHostKeyChecking=no" ${USERNAME}@${VM_IP} < install-nvidia-docker2.sh
+ssh -o "StrictHostKeyChecking=no" ${USERNAME}@${VM_IP} > /dev/null 2> /dev/null < install-nvidia-docker2.sh
 log "Installed nvidia-docker2 to ${VM_NAME}"
 
 log "ALL WORK DONE!"

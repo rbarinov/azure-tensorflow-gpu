@@ -22,5 +22,23 @@ It take about 5 mins to deploy and configure. You will get all the output in STD
 ## Example of logs
 
 ```
-todo
+2019.07.13 22:34:06: HELLO
+2019.07.13 22:34:09: CREATED Resource Group trainer in westeurope
+2019.07.13 22:34:15: CREATED VNET trainer-vnet
+2019.07.13 22:34:33: CREATED Network Security Group trainer-nsg with open ports: 22
+2019.07.13 22:34:42: CREATED Static IP trainer-vm-ip XXX.XXX.XXX.XXX for trainer-vm
+2019.07.13 22:35:15: CREATED NIC trainer-vm-nic for trainer-vm with NSG trainer-nsg
+2019.07.13 22:35:17: CREATED VM trainer-vm with disk OS 80gb with user trainer. => ssh trainer@XXX.XXX.XXX.XXX
+2019.07.13 22:35:17: SETTING UP VM
+2019.07.13 22:35:17: Waiting trainer-vm IP:XXX.XXX.XXX.XXX to become alive
+2019.07.13 22:36:45: Connected to trainer-vm IP:XXX.XXX.XXX.XXX as trainer
+2019.07.13 22:41:43: Installed docker and cuda drivers to trainer-vm, rebooting now
+2019.07.13 22:41:53: Waiting trainer-vm IP:XXX.XXX.XXX.XXX to become alive
+2019.07.13 22:42:36: Installed nvidia-docker2 to trainer-vm
+2019.07.13 22:42:36: ALL WORK DONE!
+2019.07.13 22:42:36: HOST:
+2019.07.13 22:42:36: XXX.XXX.XXX.XXX
+2019.07.13 22:42:36: connect to vm via ssh:
+2019.07.13 22:42:36: ssh trainer@XXX.XXX.XXX.XXX
+2019.07.13 22:42:36: BYE BYE!
 ```
