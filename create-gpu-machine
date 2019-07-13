@@ -1,0 +1,141 @@
+#!/bin/bash
+
+# check vm sized
+# $ az vm list-sizes -l westeurope | grep -i nc -n5
+
+VM_IP=""
+
+MASTERS=1
+RESOURCE_GROUP=$1 # swarm
+LOCATION="westeurope"
+USERNAME="trainer"
+VM_SIZE="Standard_NC6"
+SSH_PUBLIC_PATH="~/.ssh/id_rsa.pub"
+OS_DISK_SIZE=80
+
+if [[ -z "${RESOURCE_GROUP}" ]]; then
+    echo 'specify $1 resource group name'
+    exit 1
+fi
+
+log () {
+    dt=$(date '+%Y.%m.%d %H:%M:%S')
+    message="${dt}: $1"
+    echo $message >> "${RESOURCE_GROUP}.log"
+    echo $message
+}
+
+log "HELLO"
+
+# resource group
+
+SUBSCRIPTION_ID=$(az account show --output tsv |  awk '{print $2}')
+
+az group create --name $RESOURCE_GROUP --location $LOCATION --output none
+log "CREATED Resource Group $RESOURCE_GROUP in $LOCATION"
+
+# vnet
+VNET="${RESOURCE_GROUP}-vnet"
+
+az network vnet create \
+    --resource-group $RESOURCE_GROUP \
+    --name $VNET \
+    --address-prefix 10.0.0.0/16 \
+    --subnet-name default \
+    --subnet-prefix 10.0.1.0/24 \
+    --output none
+
+log "CREATED VNET $VNET"
+
+NSG="${RESOURCE_GROUP}-nsg"
+
+az network nsg create \
+    --resource-group $RESOURCE_GROUP \
+    --name $NSG \
+    --output none
+
+az network nsg rule create \
+    --resource-group $RESOURCE_GROUP \
+    --nsg-name $NSG \
+    --name "${NSG}-ssh" \
+    --protocol tcp \
+    --priority 1000 \
+    --destination-port-range 22 \
+    --access allow \
+    --output none
+
+log "CREATED Network Security Group $NSG with open ports: 22"
+
+IP_NAME="${RESOURCE_GROUP}-vm-ip"
+NIC_NAME="${RESOURCE_GROUP}-vm-nic"
+VM_NAME="${RESOURCE_GROUP}-vm"
+OS_DISK_NAME="${RESOURCE_GROUP}-vm-os-disk"
+
+az network public-ip create \
+    --resource-group $RESOURCE_GROUP \
+    --name $IP_NAME \
+    --allocation-method Static \
+    --dns-name $IP_NAME \
+    --output none
+
+VM_IP=$(az network public-ip show -g $RESOURCE_GROUP -n $IP_NAME --query "{address: ipAddress}" --output tsv)
+
+log "CREATED Static IP $IP_NAME ${VM_IP} for $VM_NAME"
+
+az network nic create \
+    --resource-group $RESOURCE_GROUP \
+    --name $NIC_NAME \
+    --vnet-name $VNET \
+    --subnet default \
+    --public-ip-address $IP_NAME \
+    --network-security-group $NSG \
+    --output none
+
+log "CREATED NIC $NIC_NAME for $VM_NAME with NSG ${NSG}"
+
+az vm create \
+    --resource-group $RESOURCE_GROUP \
+    --name $VM_NAME \
+    --location $LOCATION \
+    --nics $NIC_NAME \
+    --image UbuntuLTS \
+    --size $VM_SIZE \
+    --admin-username $USERNAME \
+    --os-disk-name $OS_DISK_NAME \
+    --os-disk-size-gb $OS_DISK_SIZE \
+    --ssh-key-value $SSH_PUBLIC_PATH \
+    --no-wait \
+    --output none
+
+log "CREATED VM $VM_NAME with disk OS ${OS_DISK_SIZE}gb with user $USERNAME. => ssh ${USERNAME}@${VM_IP}"
+
+log "SETTING UP VM"
+
+log "Waiting ${VM_NAME} IP:${VM_IP} to become alive"
+until ssh -o "StrictHostKeyChecking=no" ${USERNAME}@${VM_IP} "echo 1 > /dev/null"; do
+    sleep 5
+done
+
+log "Connected to ${VM_NAME} IP:${VM_IP} as ${USERNAME}"
+
+ssh -o "StrictHostKeyChecking=no" ${USERNAME}@${VM_IP} < install-docker-and-cuda-drivers.sh
+log "Installed docker and cuda drivers to ${VM_NAME}, rebooting now"
+sleep 10
+
+log "Waiting ${VM_NAME} IP:${VM_IP} to become alive"
+until ssh -o "StrictHostKeyChecking=no" ${USERNAME}@${VM_IP} "echo 1 > /dev/null"; do
+    sleep 5
+done
+
+ssh -o "StrictHostKeyChecking=no" ${USERNAME}@${VM_IP} < install-nvidia-docker2.sh
+log "Installed nvidia-docker2 to ${VM_NAME}"
+
+log "ALL WORK DONE!"
+
+log "HOST:"
+log "${VM_IP}"
+
+log "connect to vm via ssh:"
+log "ssh ${USERNAME}@${VM_IP}"
+
+log "BYE BYE!"
