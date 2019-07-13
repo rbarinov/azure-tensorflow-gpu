@@ -15,9 +15,9 @@ you can change vm instance size, vm os disk size, etc
 
 After you have AZ CLI installed and logged in, run a script and specify your deployment name
 
-```$ ./create-gpu-machine tensor-trainer```
+```$ ./create-gpu-machine trainer```
 
-It take about 5 mins to deploy and configure. You will get all the output in STDOUT and in a file ```tensor-trainer.log``` where are all the IPs, keys, etc. Save it for later use.
+It take about 5 mins to deploy and configure. You will get all the output in STDOUT and in a file ```trainer.log``` where are all the IPs, keys, etc. Save it for later use.
 
 ## Example of logs
 
