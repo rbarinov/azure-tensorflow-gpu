@@ -43,11 +43,9 @@ It take about 5 mins to deploy and configure. You will get all the output in STD
 2019.07.13 22:42:36: BYE BYE!
 ```
 
-## Examples
+## Example
 
-Ssh into vm
-
-Try running some docker containers
+Ssh into vm and try running some docker containers
 
 ```
 docker run \
@@ -55,12 +53,40 @@ docker run \
     --rm \
     nvidia/cuda \
     nvidia-smi
+```
 
+
+## Run a real app
+
+Ssh into vm and start tensorflow with gpu, py3, jupyter
+
+```
 docker run \
     --runtime=nvidia \
-    -u $(id -u):$(id -g) \
+    --name tensorflow \
+    --restart always \
+    -d \
+    -p 6006:6006 \
+    -p 8888:8888 \
+    tensorflow/tensorflow:latest-gpu-py3-jupyter
+```
+
+Execute bash in a running conatiner
+
+```
+# exec bash as root
+docker exec \
     -ti \
-    --rm \
-    tensorflow/tensorflow:latest-gpu-py3-jupyter \
+    -u $(id -u):$(id -g) \
+    tensorflow \
+    bash
+```
+
+```
+# exec bash as non-priviledged user
+docker exec \
+    -ti \
+    -u $(id -u):$(id -g) \
+    tensorflow \
     bash
 ```
