@@ -77,7 +77,6 @@ Execute bash in a running conatiner
 # exec bash as root
 docker exec \
     -ti \
-    -u $(id -u):$(id -g) \
     tensorflow \
     bash
 ```
