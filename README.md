@@ -42,3 +42,15 @@ It take about 5 mins to deploy and configure. You will get all the output in STD
 2019.07.13 22:42:36: ssh trainer@XXX.XXX.XXX.XXX
 2019.07.13 22:42:36: BYE BYE!
 ```
+
+## Examples
+
+Ssh into vm
+
+Try running some docker containers
+
+```
+docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
+
+docker run --runtime=nvidia -ti -u $(id -u):$(id -g) --rm tensorflow/tensorflow:latest-gpu-py3-jupyter bash
+```
