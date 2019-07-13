@@ -71,6 +71,20 @@ docker run \
     tensorflow/tensorflow:latest-gpu-py3-jupyter
 ```
 
+Make a single run of installation of prerequisites
+
+```
+docker exec \
+    -ti \
+    tensorflow \
+    bash -c \
+    " \
+        apt update \
+        && apt install -yqq tmux git protobuf-compiler \
+        && pip install keras opencv-python opencv-contrib-python seaborn scipy scikit-image \
+    "
+```
+
 Execute bash in a running conatiner
 
 ```
@@ -88,4 +102,26 @@ docker exec \
     -u $(id -u):$(id -g) \
     tensorflow \
     bash
+```
+
+## Check running tensorflow/models/research/object_detection tests correctly
+
+Exec bash in container
+
+```
+# exec bash as root
+docker exec \
+    -ti \
+    tensorflow \
+    bash
+```
+
+Run in container bash
+
+```
+git clone https://github.com/tensorflow/models models
+cd models/research
+protoc object_detection/protos/*.proto --python_out=.
+export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
+python object_detection/builders/model_builder_test.py
 ```
