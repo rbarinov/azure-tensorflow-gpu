@@ -6,6 +6,7 @@ docker run \
     --runtime=nvidia \
     --name tensorflow \
     -u $(id -u):$(id -g) \
+    --rm \
     -p 6006:6006 \
     -p 8888:8888 \
     -v $(pwd)/training:/training \
