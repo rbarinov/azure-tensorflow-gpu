@@ -130,6 +130,9 @@ done
 ssh -o "StrictHostKeyChecking=no" ${USERNAME}@${VM_IP} > /dev/null 2> /dev/null < install-nvidia-docker2.sh
 log "Installed nvidia-docker2 to ${VM_NAME}"
 
+ssh -o "StrictHostKeyChecking=no" ${USERNAME}@${VM_IP} > /dev/null 2> /dev/null < prepare-environment.sh
+log "Environment in directory ${USERNAME}/training created, rbarinov/tensorflow image pulled at ${VM_NAME}"
+
 log "ALL WORK DONE!"
 
 log "HOST:"
