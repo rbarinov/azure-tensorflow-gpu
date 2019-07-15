@@ -125,3 +125,21 @@ protoc object_detection/protos/*.proto --python_out=.
 export PYTHONPATH=$PYTHONPATH:`pwd`:`pwd`/slim
 python object_detection/builders/model_builder_test.py
 ```
+
+# Running tensorflow container with local forwarding
+
+```
+
+docker run \
+    --runtime=nvidia \
+    --name tensorflow \
+    --restart always \
+    -d \
+    -u $(id -u):$(id -g) \
+    -p 6006:6006 \
+    -p 8888:8888 \
+    -v $(pwd)/training:/training \
+    --workdir /training \
+    rbarinov/tensorflow:latest-gpu-py3-jupyter
+
+```
