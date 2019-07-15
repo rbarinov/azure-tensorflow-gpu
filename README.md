@@ -129,17 +129,18 @@ python object_detection/builders/model_builder_test.py
 # Running tensorflow container with local forwarding
 
 ```
+mkdir training
 
 docker run \
     --runtime=nvidia \
     --name tensorflow \
-    --restart always \
-    -d \
+    -ti \
+    --rm \
     -u $(id -u):$(id -g) \
     -p 6006:6006 \
     -p 8888:8888 \
     -v $(pwd)/training:/training \
     --workdir /training \
-    rbarinov/tensorflow:latest-gpu-py3-jupyter
-
+    rbarinov/tensorflow:latest-gpu-py3-jupyter \
+    bash
 ```
