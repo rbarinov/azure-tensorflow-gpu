@@ -1,4 +1,4 @@
-FROM tensorflow:latest-gpu-py3-jupyter
+FROM tensorflow/tensorflow:latest-gpu-py3-jupyter
 
 RUN apt update \
         && apt install -yqq tmux git protobuf-compiler \
